@@ -1,3 +1,5 @@
+package me.michaelkrauty.PVPManager;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

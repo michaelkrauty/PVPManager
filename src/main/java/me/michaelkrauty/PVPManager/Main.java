@@ -1,3 +1,5 @@
+package me.michaelkrauty.PVPManager;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;

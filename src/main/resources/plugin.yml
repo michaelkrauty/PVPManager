@@ -1,7 +1,7 @@
 name: PVPToggle
 version: 1.0
 author: michaelkrauty
-main: me.michaelkrauty.Main
+main: me.michaelkrauty.PVPManager.Main
 commands:
   pvp:
     description: Toggle PVP
