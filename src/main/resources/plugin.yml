@@ -1,0 +1,8 @@
+name: PVPToggle
+version: 1.0
+author: michaelkrauty
+main: me.michaelkrauty.Main
+commands:
+  pvp:
+    description: Toggle PVP
+    usage: /<command>
