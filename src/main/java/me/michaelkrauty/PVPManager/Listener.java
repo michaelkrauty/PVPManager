@@ -1,10 +1,12 @@
 package me.michaelkrauty.PVPManager;
 
+import me.michaelkrauty.PVPManager.objects.User;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * Created on 7/20/2014.
@@ -28,12 +30,12 @@ public class Listener implements org.bukkit.event.Listener {
 			target = (Player) event.getEntity();
 		} else return;
 
-		if (main.protect.contains(target.getUniqueId())) {
+		if (!main.users.get(target).pvpEnabled()) {
 			event.setCancelled(true);
 			damager.sendMessage(ChatColor.GRAY + target.getName() + " has PVP disabled!");
 			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but you have PVP disabled. Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
 		}
-		if (main.protect.contains(damager.getUniqueId())) {
+		if (!main.users.get(damager).pvpEnabled()) {
 			event.setCancelled(true);
 			damager.sendMessage(ChatColor.GRAY + "You have PVP disabled! Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
 			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but they have PVP disabled.");
@@ -42,9 +44,15 @@ public class Listener implements org.bukkit.event.Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		User user = new User(main, event.getPlayer());
 		if (!event.getPlayer().hasPlayedBefore())
-			main.protect.add(event.getPlayer().getUniqueId());
-		if (main.protect.contains(event.getPlayer().getUniqueId()))
+			user.setPVPEnabled(false);
+		if (!user.pvpEnabled())
 			event.getPlayer().sendMessage(ChatColor.GRAY + "You have PVP disabled! Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
+	}
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		main.users.remove(event.getPlayer());
 	}
 }
