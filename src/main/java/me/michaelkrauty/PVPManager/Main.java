@@ -1,6 +1,5 @@
 package me.michaelkrauty.PVPManager;
 
-import me.michaelkrauty.PVPManager.commands.Test;
 import me.michaelkrauty.PVPManager.objects.User;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
@@ -29,7 +28,6 @@ public class Main extends JavaPlugin {
 		main = this;
 		getServer().getPluginManager().registerEvents(new Listener(this), this);
 		getServer().getPluginCommand("pvp").setExecutor(new Command(this));
-		// getServer().getPluginCommand("test").setExecutor(new Test(this));
 		if (!getDataFolder().exists()) getDataFolder().mkdir();
 		File userdata = new File(getDataFolder(), "userdata");
 		if (!userdata.exists()) userdata.mkdir();
