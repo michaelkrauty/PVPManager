@@ -3,6 +3,7 @@ package me.michaelkrauty.PVPManager;
 import me.michaelkrauty.PVPManager.objects.User;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -11,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -73,20 +73,31 @@ public class Listener implements org.bukkit.event.Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		User user = main.users.get(player);
-		boolean combat = false;
-		if (user.inCombat())
-			combat = true;
-		user.save();
-		main.users.remove(player);
-
-		if (combat) {
+		if (user.inCombat()) {
 			Pig pig = (Pig) player.getWorld().spawnEntity(player.getLocation(), EntityType.PIG);
 			pig.setCustomName("COMBAT LOGGER: " + player.getName());
 			pig.setCustomNameVisible(true);
 			pig.setRemoveWhenFarAway(false);
 			pig.setMetadata("inplaceofplayer", new FixedMetadataValue(main, player.getUniqueId().toString()));
+			main.uuidPigHashMap.put(player.getUniqueId(), pig);
 			main.combatLoggers.put(pig, player.getInventory());
+			main.combatLoggersArmor.put(pig, player.getInventory().getArmorContents());
+			main.getServer().broadcastMessage(ChatColor.RED + "COMBAT LOGGER: " + player.getName());
+			final Pig finalPig = pig;
+			final Player finalPlayer = player;
+			main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+				public void run() {
+					if (finalPig != null) {
+						Pig pig = main.uuidPigHashMap.get(finalPlayer.getUniqueId());
+						main.combatLoggers.remove(pig);
+						main.combatLoggersArmor.remove(pig);
+						pig.remove();
+					}
+				}
+			}, 200);
 		}
+		user.save();
+		main.users.remove(player);
 	}
 
 	@EventHandler
@@ -99,6 +110,12 @@ public class Listener implements org.bukkit.event.Listener {
 				for (ItemStack i : main.combatLoggers.get(pig).getContents()) {
 					if (i != null)
 						world.dropItem(loc, i);
+				}
+				if (main.combatLoggersArmor.get(pig) != null) {
+					for (ItemStack i : main.combatLoggersArmor.get(pig)) {
+						if (i != null && i.getType() != Material.AIR)
+							world.dropItem(loc, i);
+					}
 				}
 				try {
 					File userFile = new File(main.getDataFolder() + "/userdata/" + pig.getMetadata("inplaceofplayer").get(0).asString() + ".yml");

@@ -2,6 +2,7 @@ package me.michaelkrauty.PVPManager.objects;
 
 import me.michaelkrauty.PVPManager.Main;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,6 +36,12 @@ public class User {
 		this.player = player;
 		load();
 		main.getLogger().info("loaded user: " + player.getName());
+		if (main.uuidPigHashMap.get(player.getUniqueId()) instanceof Pig) {
+			Pig pig = main.uuidPigHashMap.get(player.getUniqueId());
+			main.combatLoggers.remove(pig);
+			main.combatLoggersArmor.remove(pig);
+			pig.remove();
+		}
 		if (deadLogin) {
 			player.getInventory().setArmorContents(null);
 			player.getInventory().setContents(new ItemStack[] {null});
@@ -44,6 +51,8 @@ public class User {
 			public void run() {
 				if (combatTime > 0)
 					combatTime = combatTime - 1;
+				else
+					combat = false;
 			}
 		}, 1, 1);
 	}

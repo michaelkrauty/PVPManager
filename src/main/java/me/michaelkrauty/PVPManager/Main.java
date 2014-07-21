@@ -4,12 +4,12 @@ import me.michaelkrauty.PVPManager.objects.User;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
+import java.util.UUID;
 
 /**
  * Created on 7/20/2014.
@@ -22,7 +22,11 @@ public class Main extends JavaPlugin {
 
 	public static HashMap<Player, User> users = new HashMap<Player, User>();
 
+	public static HashMap<UUID, Pig> uuidPigHashMap = new HashMap<UUID, Pig>();
+
 	public static HashMap<Pig, Inventory> combatLoggers = new HashMap<Pig, Inventory>();
+
+	public static HashMap<Pig, ItemStack[]> combatLoggersArmor = new HashMap<Pig, ItemStack[]>();
 
 	public void onEnable() {
 		main = this;
