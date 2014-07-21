@@ -1,6 +1,7 @@
 package me.michaelkrauty.PVPManager.objects;
 
 import me.michaelkrauty.PVPManager.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
@@ -47,12 +48,17 @@ public class User {
 			player.getInventory().setContents(new ItemStack[]{null});
 			player.setHealth(0);
 		}
-		main.getServer().getScheduler().scheduleAsyncRepeatingTask(main, new Runnable() {
+		final Player playerFinal = player;
+		main.getServer().getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
 			public void run() {
+				boolean start = combat;
 				if (combatTime > 0)
 					combatTime = combatTime - 1;
 				else
 					combat = false;
+				if (start != combat)
+					playerFinal.sendMessage(ChatColor.LIGHT_PURPLE + "You may now safely log out.");
+
 			}
 		}, 1, 1);
 	}
@@ -73,9 +79,9 @@ public class User {
 		return combatTime;
 	}
 
-	public void wasHit() {
-		combat = true;
+	public void pvpEvent() {
 		combatTime = 200;
+		combat = true;
 	}
 
 	public void save() {

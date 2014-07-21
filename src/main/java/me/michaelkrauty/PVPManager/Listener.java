@@ -56,8 +56,8 @@ public class Listener implements org.bukkit.event.Listener {
 			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but they have PVP disabled.");
 			return;
 		}
-		targetUser.wasHit();
-		damagerUser.wasHit();
+		targetUser.pvpEvent();
+		damagerUser.pvpEvent();
 		target.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + targetUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
 		damager.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + damagerUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
 	}

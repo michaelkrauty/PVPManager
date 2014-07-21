@@ -24,12 +24,23 @@ public class Command implements CommandExecutor {
 			return true;
 		Player player = (Player) sender;
 		User user = main.users.get(player);
-		if (!user.pvpEnabled()) {
-			user.setPVP(true);
-			player.sendMessage(ChatColor.GRAY + "PVP Enabled!");
+		if (args.length == 0) {
+			if (!user.pvpEnabled()) {
+				user.setPVP(true);
+				player.sendMessage(ChatColor.GRAY + "PVP Enabled!");
+				return true;
+			}
+			sender.sendMessage(ChatColor.GRAY + "You can't disable PVP after you have enabled it!");
 			return true;
 		}
-		sender.sendMessage(ChatColor.GRAY + "You can't disable PVP after you have enabled it!");
+		if (args.length == 1) {
+			if (args[0].equalsIgnoreCase("time")) {
+				if (user.getCombatTime() == 0)
+					player.sendMessage(ChatColor.LIGHT_PURPLE + "You're not in combat!");
+				else
+					player.sendMessage(ChatColor.RED + "You are in combat for another " + ChatColor.DARK_RED + user.getCombatTime() / 20 + ChatColor.RED + " seconds.");
+			}
+		}
 		return true;
 	}
 }
