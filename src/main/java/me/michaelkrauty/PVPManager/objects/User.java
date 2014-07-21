@@ -44,7 +44,7 @@ public class User {
 		}
 		if (deadLogin) {
 			player.getInventory().setArmorContents(null);
-			player.getInventory().setContents(new ItemStack[] {null});
+			player.getInventory().setContents(new ItemStack[]{null});
 			player.setHealth(0);
 		}
 		main.getServer().getScheduler().scheduleAsyncRepeatingTask(main, new Runnable() {
@@ -57,20 +57,8 @@ public class User {
 		}, 1, 1);
 	}
 
-	public Player getPlayer() {
-		return player;
-	}
-
 	public void setPVP(boolean pvp) {
 		this.pvp = pvp;
-	}
-
-	public void setCombat(boolean combat) {
-		this.combat = combat;
-	}
-
-	public void setCombatTime(long combatTime) {
-		this.combatTime = combatTime;
 	}
 
 	public boolean pvpEnabled() {
