@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -55,10 +56,10 @@ public class Listener implements org.bukkit.event.Listener {
 			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but they have PVP disabled.");
 			return;
 		}
-		targetUser.setPVP(true);
-		damagerUser.setPVP(true);
-		target.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next 10 seconds. DO NOT LOG OUT.");
-		damager.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next 10 seconds. DO NOT LOG OUT.");
+		targetUser.wasHit();
+		damagerUser.wasHit();
+		target.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + targetUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
+		damager.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + damagerUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
 	}
 
 	@EventHandler
@@ -110,5 +111,10 @@ public class Listener implements org.bukkit.event.Listener {
 				}
 			}
 		}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+
 	}
 }

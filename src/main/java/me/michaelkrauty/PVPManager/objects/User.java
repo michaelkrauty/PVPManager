@@ -3,6 +3,7 @@ package me.michaelkrauty.PVPManager.objects;
 import me.michaelkrauty.PVPManager.Main;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
@@ -17,6 +18,7 @@ public class User {
 	private boolean pvp;
 	private boolean combat;
 	private boolean deadLogin;
+	private long combatTime;
 	private Main main;
 	private File file;
 
@@ -26,14 +28,24 @@ public class User {
 		if (!file.exists()) {
 			pvp = false;
 			combat = false;
+			combatTime = 0;
 			save();
 		}
 		main.users.put(player, this);
 		this.player = player;
 		load();
 		main.getLogger().info("loaded user: " + player.getName());
-		if (deadLogin)
+		if (deadLogin) {
+			player.getInventory().setArmorContents(null);
+			player.getInventory().setContents(new ItemStack[] {null});
 			player.setHealth(0);
+		}
+		main.getServer().getScheduler().scheduleAsyncRepeatingTask(main, new Runnable() {
+			public void run() {
+				if (combatTime > 0)
+					combatTime = combatTime - 1;
+			}
+		}, 1, 1);
 	}
 
 	public Player getPlayer() {
@@ -48,12 +60,25 @@ public class User {
 		this.combat = combat;
 	}
 
+	public void setCombatTime(long combatTime) {
+		this.combatTime = combatTime;
+	}
+
 	public boolean pvpEnabled() {
 		return pvp;
 	}
 
 	public boolean inCombat() {
 		return combat;
+	}
+
+	public long getCombatTime() {
+		return combatTime;
+	}
+
+	public void wasHit() {
+		combat = true;
+		combatTime = 200;
 	}
 
 	public void save() {
