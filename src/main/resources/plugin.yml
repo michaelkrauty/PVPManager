@@ -1,4 +1,4 @@
-name: PVPToggle
+name: PVPManager
 version: 1.0
 author: michaelkrauty
 main: me.michaelkrauty.PVPManager.Main

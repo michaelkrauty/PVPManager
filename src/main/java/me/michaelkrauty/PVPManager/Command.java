@@ -2,7 +2,6 @@ package me.michaelkrauty.PVPManager;
 
 import me.michaelkrauty.PVPManager.objects.User;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,21 +11,21 @@ import org.bukkit.entity.Player;
  *
  * @author michaelkrauty
  */
-public class PVPToggleCommand implements CommandExecutor {
+public class Command implements CommandExecutor {
 
 	private static Main main;
 
-	public PVPToggleCommand(Main main) {
+	public Command(Main main) {
 		this.main = main;
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String commandLabel, String[] args) {
 		if (!(sender instanceof Player))
 			return true;
 		Player player = (Player) sender;
 		User user = main.users.get(player);
 		if (!user.pvpEnabled()) {
-			user.setPVPEnabled(true);
+			user.setPVP(true);
 			player.sendMessage(ChatColor.GRAY + "PVP Enabled!");
 			return true;
 		}

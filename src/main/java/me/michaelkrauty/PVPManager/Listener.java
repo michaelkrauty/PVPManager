@@ -2,11 +2,22 @@ package me.michaelkrauty.PVPManager;
 
 import me.michaelkrauty.PVPManager.objects.User;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+
+import java.io.File;
 
 /**
  * Created on 7/20/2014.
@@ -29,30 +40,75 @@ public class Listener implements org.bukkit.event.Listener {
 			damager = (Player) event.getDamager();
 			target = (Player) event.getEntity();
 		} else return;
+		User targetUser = main.users.get(target);
+		User damagerUser = main.users.get(damager);
 
-		if (!main.users.get(target).pvpEnabled()) {
+		if (!targetUser.pvpEnabled()) {
 			event.setCancelled(true);
 			damager.sendMessage(ChatColor.GRAY + target.getName() + " has PVP disabled!");
 			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but you have PVP disabled. Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
+			return;
 		}
-		if (!main.users.get(damager).pvpEnabled()) {
+		if (!damagerUser.pvpEnabled()) {
 			event.setCancelled(true);
 			damager.sendMessage(ChatColor.GRAY + "You have PVP disabled! Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
 			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but they have PVP disabled.");
+			return;
 		}
+		targetUser.setPVP(true);
+		damagerUser.setPVP(true);
+		target.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next 10 seconds. DO NOT LOG OUT.");
+		damager.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next 10 seconds. DO NOT LOG OUT.");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		User user = new User(main, event.getPlayer());
-		if (!event.getPlayer().hasPlayedBefore())
-			user.setPVPEnabled(false);
 		if (!user.pvpEnabled())
 			event.getPlayer().sendMessage(ChatColor.GRAY + "You have PVP disabled! Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		main.users.remove(event.getPlayer());
+		Player player = event.getPlayer();
+		User user = main.users.get(player);
+		boolean combat = false;
+		if (user.inCombat())
+			combat = true;
+		user.save();
+		main.users.remove(player);
+
+		if (combat) {
+			Pig pig = (Pig) player.getWorld().spawnEntity(player.getLocation(), EntityType.PIG);
+			pig.setCustomName("COMBAT LOGGER: " + player.getName());
+			pig.setCustomNameVisible(true);
+			pig.setRemoveWhenFarAway(false);
+			pig.setMetadata("inplaceofplayer", new FixedMetadataValue(main, player.getUniqueId().toString()));
+			main.combatLoggers.put(pig, player.getInventory());
+		}
+	}
+
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent event) {
+		if (event.getEntity().getType() == EntityType.PIG) {
+			Pig pig = (Pig) event.getEntity();
+			if (main.combatLoggers.get(pig) != null) {
+				World world = event.getEntity().getWorld();
+				Location loc = event.getEntity().getLocation();
+				for (ItemStack i : main.combatLoggers.get(pig).getContents()) {
+					if (i != null)
+						world.dropItem(loc, i);
+				}
+				try {
+					File userFile = new File(main.getDataFolder() + "/userdata/" + pig.getMetadata("inplaceofplayer").get(0).asString() + ".yml");
+					YamlConfiguration yaml = new YamlConfiguration();
+					yaml.load(userFile);
+					yaml.set("deadlogin", true);
+					yaml.save(userFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
