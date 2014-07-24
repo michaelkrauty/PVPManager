@@ -10,8 +10,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -33,33 +35,41 @@ public class Listener implements org.bukkit.event.Listener {
 		this.main = main;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		Player target;
-		Player damager;
-		if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-			damager = (Player) event.getDamager();
-			target = (Player) event.getEntity();
-		} else return;
-		User targetUser = main.users.get(target);
-		User damagerUser = main.users.get(damager);
+		if (!event.isCancelled()) {
+			Player target;
+			Player damager;
+			if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+				damager = (Player) event.getDamager();
+				target = (Player) event.getEntity();
+			} else return;
+			User targetUser = main.users.get(target);
+			User damagerUser = main.users.get(damager);
 
-		if (!targetUser.pvpEnabled()) {
-			event.setCancelled(true);
-			damager.sendMessage(ChatColor.GRAY + target.getName() + " has PVP disabled!");
-			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but you have PVP disabled. Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
-			return;
+			if (!targetUser.pvpEnabled()) {
+				event.setCancelled(true);
+				damager.sendMessage(ChatColor.GRAY + target.getName() + " has PVP disabled!");
+				target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but you have PVP disabled. Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
+				return;
+			}
+			if (!damagerUser.pvpEnabled()) {
+				event.setCancelled(true);
+				damager.sendMessage(ChatColor.GRAY + "You have PVP disabled! Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
+				target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but they have PVP disabled.");
+				return;
+			}
+			boolean targetCombat = targetUser.inCombat();
+			boolean damagerCombat = damagerUser.inCombat();
+			targetUser.pvpEvent();
+			damagerUser.pvpEvent();
+			if (!targetCombat) {
+				target.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + targetUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
+			}
+			if (!damagerCombat) {
+				damager.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + damagerUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
+			}
 		}
-		if (!damagerUser.pvpEnabled()) {
-			event.setCancelled(true);
-			damager.sendMessage(ChatColor.GRAY + "You have PVP disabled! Enable it by using " + ChatColor.GREEN + "/pvp" + ChatColor.GRAY + ".");
-			target.sendMessage(ChatColor.GRAY + damager.getName() + " tried to hit you, but they have PVP disabled.");
-			return;
-		}
-		targetUser.pvpEvent();
-		damagerUser.pvpEvent();
-		target.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + targetUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
-		damager.sendMessage(ChatColor.LIGHT_PURPLE + "You are in combat for the next " + damagerUser.getCombatTime() / 20 + " seconds. DO NOT LOG OUT.");
 	}
 
 	@EventHandler
@@ -133,5 +143,15 @@ public class Listener implements org.bukkit.event.Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 
+	}
+
+	@EventHandler
+	public void onCommandprocess(PlayerCommandPreprocessEvent event) {
+		if (event.getPlayer() != null) {
+			if (main.users.get(event.getPlayer()).inCombat()) {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(ChatColor.RED + "You can't use commands while in combat!");
+			}
+		}
 	}
 }

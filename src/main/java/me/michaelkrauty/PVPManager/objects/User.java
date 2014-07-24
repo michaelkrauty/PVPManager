@@ -82,6 +82,8 @@ public class User {
 	public void pvpEvent() {
 		combatTime = 200;
 		combat = true;
+		if (player.isFlying())
+			player.setFlying(false);
 	}
 
 	public void save() {
