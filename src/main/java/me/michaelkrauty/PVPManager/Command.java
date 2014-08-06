@@ -1,6 +1,7 @@
 package me.michaelkrauty.PVPManager;
 
-import me.michaelkrauty.PVPManager.objects.User;
+import me.michaelkrauty.CarbonCore.CarbonCore;
+import me.michaelkrauty.CarbonCore.objects.User;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,17 +14,17 @@ import org.bukkit.entity.Player;
  */
 public class Command implements CommandExecutor {
 
-	private static Main main;
+	private static CarbonCore core;
 
-	public Command(Main main) {
-		this.main = main;
+	public Command(CarbonCore core) {
+		this.core = core;
 	}
 
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String commandLabel, String[] args) {
 		if (!(sender instanceof Player))
 			return true;
 		Player player = (Player) sender;
-		User user = main.users.get(player);
+		User user = core.users.get(player);
 		if (args.length == 0) {
 			if (!user.pvpEnabled()) {
 				user.setPVP(true);
