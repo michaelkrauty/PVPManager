@@ -3,8 +3,8 @@ package me.michaelkrauty.PVPManager.objects;
 import me.michaelkrauty.PVPManager.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -21,11 +21,9 @@ public class User {
 	private boolean combat;
 	private boolean deadLogin;
 	private long combatTime;
-	private Main main;
 	private File file;
 
 	public User(Main main, Player player) {
-		this.main = main;
 		file = new File(main.getDataFolder() + "/userdata/" + player.getUniqueId().toString() + ".yml");
 		if (!file.exists()) {
 			pvp = false;
@@ -37,16 +35,17 @@ public class User {
 		this.player = player;
 		load();
 		main.getLogger().info("loaded user: " + player.getName());
-		if (main.uuidPigHashMap.get(player.getUniqueId()) instanceof Pig) {
-			Pig pig = main.uuidPigHashMap.get(player.getUniqueId());
-			main.combatLoggers.remove(pig);
-			main.combatLoggersArmor.remove(pig);
-			pig.remove();
+		if (main.uuidZombieHashMap.get(player.getUniqueId()) instanceof Zombie) {
+			Zombie zombie = main.uuidZombieHashMap.get(player.getUniqueId());
+			main.combatLoggerZombies.remove(zombie);
+			main.combatLoggerZombiesArmor.remove(zombie);
+			zombie.remove();
 		}
 		if (deadLogin) {
 			player.getInventory().setArmorContents(null);
 			player.getInventory().setContents(new ItemStack[]{null});
 			player.setHealth(0);
+			main.getServer().broadcastMessage(ChatColor.RED + player.getName() + " logged out in combat, and was killed!");
 		}
 		final Player playerFinal = player;
 		main.getServer().getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
@@ -82,8 +81,7 @@ public class User {
 	public void pvpEvent() {
 		combatTime = 200;
 		combat = true;
-		if (player.isFlying())
-			player.setFlying(false);
+		player.setFlying(false);
 	}
 
 	public void save() {
@@ -106,5 +104,10 @@ public class User {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void outOfCombat() {
+		combat = false;
+		combatTime = 0;
 	}
 }

@@ -1,8 +1,8 @@
 package me.michaelkrauty.PVPManager;
 
 import me.michaelkrauty.PVPManager.objects.User;
-import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,11 +22,9 @@ public class Main extends JavaPlugin {
 
 	public static HashMap<Player, User> users = new HashMap<Player, User>();
 
-	public static HashMap<UUID, Pig> uuidPigHashMap = new HashMap<UUID, Pig>();
-
-	public static HashMap<Pig, Inventory> combatLoggers = new HashMap<Pig, Inventory>();
-
-	public static HashMap<Pig, ItemStack[]> combatLoggersArmor = new HashMap<Pig, ItemStack[]>();
+	public static HashMap<UUID, Zombie> uuidZombieHashMap = new HashMap<UUID, Zombie>();
+	public static HashMap<Zombie, Inventory> combatLoggerZombies = new HashMap<Zombie, Inventory>();
+	public static HashMap<Zombie, ItemStack[]> combatLoggerZombiesArmor = new HashMap<Zombie, ItemStack[]>();
 
 	public void onEnable() {
 		main = this;
