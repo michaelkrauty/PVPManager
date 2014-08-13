@@ -152,17 +152,19 @@ public class Listener implements org.bukkit.event.Listener {
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (core.users.get((Player) event.getEntity()).inCombat())
-			core.users.get((Player) event.getEntity()).outOfCombat();
+		if (core.users.get(event.getEntity()).inCombat())
+			core.users.get(event.getEntity()).outOfCombat();
 	}
 
 	@EventHandler
 	public void onCommandprocess(PlayerCommandPreprocessEvent event) {
-		if (event.getPlayer() != null) {
-			if (core.users.get(event.getPlayer()).inCombat()) {
-				event.setCancelled(true);
-				event.getPlayer().sendMessage(ChatColor.RED + "You can't use commands while in combat!");
-				event.getPlayer().sendMessage(ChatColor.RED + "Time left in combat: " + core.users.get(event.getPlayer()).getCombatTime() / 20 + " seconds");
+		if (event != null) {
+			if (event.getPlayer() != null) {
+				if (core.users.get(event.getPlayer()).inCombat()) {
+					event.setCancelled(true);
+					event.getPlayer().sendMessage(ChatColor.RED + "You can't use commands while in combat!");
+					event.getPlayer().sendMessage(ChatColor.RED + "Time left in combat: " + core.users.get(event.getPlayer()).getCombatTime() / 20 + " seconds");
+				}
 			}
 		}
 	}
