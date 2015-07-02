@@ -1,47 +1,60 @@
 package me.michaelkrauty.PVPManager;
 
-import me.michaelkrauty.PVPManager.objects.User;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import me.michaelkrauty.PVPManager.commands.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.ArrayList;
 
 /**
- * Created on 7/20/2014.
+ * Created on 7/1/2015.
  *
  * @author michaelkrauty
  */
 public class Main extends JavaPlugin {
 
-	public static Main main;
+    public File userFolder;
+    public UserManager userManager;
+    public Config config;
+    public Locale locale;
 
-	public static HashMap<Player, User> users = new HashMap<Player, User>();
+    public ArrayList<PlayerPig> pigs = new ArrayList<PlayerPig>();
 
-	public static HashMap<UUID, Zombie> uuidZombieHashMap = new HashMap<UUID, Zombie>();
-	public static HashMap<Zombie, Inventory> combatLoggerZombies = new HashMap<Zombie, Inventory>();
-	public static HashMap<Zombie, ItemStack[]> combatLoggerZombiesArmor = new HashMap<Zombie, ItemStack[]>();
+    public void onEnable() {
 
-	public void onEnable() {
-		main = this;
-		getServer().getPluginManager().registerEvents(new Listener(this), this);
-		getServer().getPluginCommand("pvp").setExecutor(new Command(this));
-		if (!getDataFolder().exists()) getDataFolder().mkdir();
-		File userdata = new File(getDataFolder(), "userdata");
-		if (!userdata.exists()) userdata.mkdir();
-		for (Player player : getServer().getOnlinePlayers()) {
-			users.put(player, new User(this, player));
-		}
-	}
+        // Check data folder
+        if (!getDataFolder().exists())
+            getDataFolder().mkdir();
 
-	public void onDisable() {
-		for (Player player : getServer().getOnlinePlayers()) {
-			users.get(player).save();
-			users.remove(player);
-		}
-	}
+        // Setup config
+        if (!new File(getDataFolder(), "config.yml").exists())
+            saveDefaultConfig();
+        config = new Config(this);
+        locale = new Locale(this);
+
+        // Check users folder
+        userFolder = new File(getDataFolder(), "users");
+        if (!userFolder.exists())
+            userFolder.mkdir();
+
+        // Register the player listener
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+
+        // Register commands
+        getServer().getPluginCommand("pvp").setExecutor(new PVPCommand(this));
+        getServer().getPluginCommand("pve").setExecutor(new PVECommand(this));
+        getServer().getPluginCommand("invincible").setExecutor(new InvincibleCommand(this));
+        getServer().getPluginCommand("protection").setExecutor(new ProtectionCommand(this));
+        getServer().getPluginCommand("cancelprotection").setExecutor(new CancelProtectionCommand(this));
+        getServer().getPluginCommand("pvptime").setExecutor(new PVPTimeCommand(this));
+        getServer().getPluginCommand("setprotection").setExecutor(new SetProtectionCommand(this));
+
+        // Setup user manager
+        userManager = new UserManager(this);
+        userManager.loadAllUsers();
+    }
+
+    public void onDisable() {
+        userManager.unloadAllUsers();
+    }
 }

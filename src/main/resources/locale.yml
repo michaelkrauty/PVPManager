@@ -1,0 +1,41 @@
+NO_PERMISSION: '&7You don''t have permission to do that.'
+PLAYER_NOT_FOUND: '&7Couldn''t find the player &a%target%&7.'
+
+BROADCAST_PLAYER_KILLED_AFTER_COMBAT_LOG: '&c%target%''s pig was killed after they combat logged.'
+BROADCAST_DEAD_LOGIN: '&c%target%''s pig was killed after they combat logged, so they too are now dead!'
+
+CANCEL_PROTECTION_CONFIRM: '&7Are you sure you want to enable PVP? This will allow other players to kill you. Execute this command again to confirm.'
+CANCEL_PROTECTION_NOW_VULNERABLE: '&7You are now vulnerable to other players!'
+CANCEL_PROTECTION_NOT_PROTECTED: '&7You are not protected from PVP.'
+CANCEL_PROTECTION_NOW_VULNERABLE_OTHER_PLAYER: '&a%target% &7is now vulnerable to other players.'
+
+INVINCIBILITY_ENABLED: '&7Enabled invincibility for &a%target%&7.'
+INVINCIBILITY_DISABLED: '&7Disbled invincibility for &a%target%&7.'
+
+PROTECTION_PROTECTED: '&7You are protected from PVP for another &a%seconds% seconds&7.'
+PROTECTION_NOT_PROTECTED: '&7You are not protected from PVP!'
+PROTECTION_PROTECTED_OTHER_PLAYER: '&7%target% is protected from PVP for another &a%seconds% seconds&7.'
+PROTECTION_NOT_PROTECTED_OTHER_PLAYER: '&a%target% &7is not protected from PVP!'
+
+PVP_DISABLED: '&7Disabled PVP for &a%target%&7.'
+PVP_ENABLED: '&7Enabled PVP for &a%target%&7.'
+PVP_IMPROPER_USE: '&7Usage: &a/pvp [player]'
+
+PVE_DISABLED: '&7Disabled PVE for &a%target%&7.'
+PVE_ENABLED: '&7Enabled PVE for &a%target%&7.'
+PVE_IMPROPER_USE: '&7Usage: &a/pve [player]'
+
+PVP_TIME: '&7You are in combat for another &a%seconds% seconds&7.'
+PVP_TIME_NOT_IN_COMBAT: '&7You are not in combat.'
+
+SET_PROTECTION: '&7Set &a%target%&7''s protection time to &a%seconds% seconds&7.'
+
+
+MESSAGE_NOW_VULNERABLE: '&cYou are now vulnerable to other players!'
+MESSAGE_NO_LONGER_IN_COMBAT: '&7You are no longer in combat, and may now log out.'
+
+ON_ATTACK_TARGET_IS_PROTECTED: '&a%target% &7is protected from PVP.'
+ON_ATTACK_TARGET_IS_INVINCIBLE: '&a%target% &7is invincible.'
+ON_ATTACK_ATTACKER_PVP_DISABLED: '&7You can''t hurt other players while protected from PVP!'
+ON_ATTACK_NOW_IN_COMBAT_ATTACKER: '&cYOU ARE NOW IN COMBAT. DO NOT LOG OUT.'
+ON_ATTACK_NOW_IN_COMBAT_TARGET: '&cYOU ARE NOW IN COMBAT. DO NOT LOG OUT.'

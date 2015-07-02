@@ -1,0 +1,12 @@
+# Do not change this value
+configversion: 1
+
+# Should a player keep their inventory if they are killed by a player?
+keep_inventory_player: false
+
+# Should a player keep their inventory if they are killed by a non player?
+keep_inventory_non_player: true
+
+# Should a player be protected from PVP when they first join the server?
+# 0 = no, >0 = seconds to be protected
+newbie_protection: 600

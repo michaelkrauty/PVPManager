@@ -4,5 +4,23 @@ author: michaelkrauty
 main: me.michaelkrauty.PVPManager.Main
 commands:
   pvp:
-    description: Toggle PVP
-    usage: /<command>
+    usage: /pvp
+    permission: pvpmanager.pvp
+  pve:
+    usage: /pve
+    permission: pvpmanager.pve
+  invincible:
+    usage: /invincible
+    permission: pvpmanager.invincible
+  protection:
+    usage: /protection
+    permission: pvpmanager.protection
+  cancelprotection:
+    usage: /cancelprotection [player]
+    permission: pvpmanager.cancelprotection
+  pvptime:
+    usage: /pvptime [player]
+    permission: pvpmanager.pvptime
+  setprotection:
+    usage: /setprotection [player|seconds] [seconds]
+    permission: pvpmanager.setprotection
